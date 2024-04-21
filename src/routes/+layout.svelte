@@ -1,12 +1,15 @@
 <script lang="ts">
     import { page } from '$app/stores';
     import { PUBLIC_VERSION, PUBLIC_GITHUB_REPO } from '$env/static/public';
-    import Github01Icon from '$lib/hugeicons/Github01Icon.svelte';
-    import Menu01Icon from '$lib/hugeicons/Menu01Icon.svelte';
-    import Calendar03Icon from '$lib/hugeicons/Calendar03Icon.svelte';
-    import Settings04Icon from '$lib/hugeicons/Settings04Icon.svelte';
-    import InformationCircleIcon from '$lib/hugeicons/InformationCircleIcon.svelte';
-    import Clock01Icon from '$lib/hugeicons/Clock01Icon.svelte';
+    import {
+        Hugeicon,
+        Github01Icon,
+        Menu01Icon,
+        Calendar03Icon,
+        Settings04Icon,
+        InformationCircleIcon,
+        Clock01Icon
+    } from 'hugeicons-svelte';
 
     function getGroup(path: string) {
         const match = /^\/\(([^\)]+)\)/.exec(path);
@@ -24,7 +27,7 @@
             class="sidebar sidebar-fixed-left sidebar-mobile h-full justify-start max-sm:fixed max-sm:-translate-x-full"
         >
             <section class="sidebar-title items-center p-4">
-                <Settings04Icon class="p-0.5" size="42" />
+                <Hugeicon icon={Settings04Icon} class="p-0.5" size="42" />
                 <div class="flex flex-col">
                     <span>Streamer Utilities</span>
                     <span class="text-xs font-normal text-content2">{PUBLIC_VERSION}</span>
@@ -36,7 +39,10 @@
                         <ul class="menu-items">
                             <li class="contents">
                                 <a href="/" class="menu-item" class:menu-active={group === 'about'}>
-                                    <InformationCircleIcon class="h-5 w-5 opacity-75" />
+                                    <Hugeicon
+                                        icon={InformationCircleIcon}
+                                        class="h-5 w-5 opacity-75"
+                                    />
                                     <span>About</span>
                                 </a>
                             </li>
@@ -46,15 +52,28 @@
                         <span class="menu-title">Streaming Widgets</span>
                         <ul class="menu-items">
                             <li class="contents">
-                                <a href="/clock" class="menu-item" class:menu-active={group === 'clock'}>
-                                    <Clock01Icon class="h-5 w-5 opacity-75" />
+                                <a
+                                    href="/clock"
+                                    class="menu-item"
+                                    class:menu-active={group === 'clock'}
+                                >
+                                    <Hugeicon icon={Clock01Icon} class="h-5 w-5 opacity-75" />
                                     <span>Clock</span>
                                 </a>
                             </li>
                             <ul class="menu-items">
-                                <li class="menu-item">
-                                    <Calendar03Icon class="h-5 w-5 opacity-75" />
-                                    <span>Count down</span>
+                                <li class="contents">
+                                    <a
+                                        href="count-down"
+                                        class="menu-item"
+                                        class:menu-active={group === 'cd'}
+                                    >
+                                        <Hugeicon
+                                            icon={Calendar03Icon}
+                                            class="h-5 w-5 opacity-75"
+                                        />
+                                        <span>Count down</span>
+                                    </a>
                                 </li>
                             </ul>
                         </ul>
@@ -69,7 +88,7 @@
                             <ul class="menu-items">
                                 <li class="contents">
                                     <a href={PUBLIC_GITHUB_REPO} target="_blank" class="menu-item">
-                                        <Github01Icon class="h-5 w-5 opacity-75" />
+                                        <Hugeicon icon={Github01Icon} class="h-5 w-5 opacity-75" />
                                         <span>Source Code</span>
                                     </a>
                                 </li>
@@ -83,7 +102,7 @@
     <div class="flex w-full flex-col p-4 gap-2">
         <div class="w-fit">
             <label for="sidebar-mobile-fixed" class="btn btn-circle sm:hidden">
-                <Menu01Icon />
+                <Hugeicon icon={Menu01Icon} />
             </label>
         </div>
         <slot />

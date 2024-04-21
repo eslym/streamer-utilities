@@ -11,7 +11,7 @@
     "check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch",
     "lint": "prettier --check .",
     "format": "prettier --write .",
-    "prepare": "bun hugeicons.ts && husky install"
+    "prepare": "bun hugeicons.ts"
   },
   "devDependencies": {
     "@sveltejs/adapter-static": "^3.0.1",
@@ -22,7 +22,9 @@
     "autoprefixer": "^10.4.16",
     "bun-types": "^1.1.4",
     "hugeicons-react": "^0.2.0",
+    "husky": "^8.0.0",
     "js-convert-case": "^4.2.0",
+    "mdsvex": "^0.11.0",
     "postcss": "^8.4.32",
     "postcss-load-config": "^5.0.2",
     "prettier": "^3.1.1",
@@ -36,7 +38,7 @@
     "tslib": "^2.4.1",
     "typescript": "^5.0.0",
     "vite": "^5.0.3",
-    "husky": "^8.0.0"
+    "xmlbuilder2": "^3.1.1"
   },
   "type": "module"
 }

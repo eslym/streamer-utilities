@@ -18,3 +18,8 @@ URL.prototype.to = function to(
 ) {
     return (this.ext as any)(path, query).toString();
 };
+
+URLSearchParams.prototype.getNumber = function getNumber(name: string) {
+    const value = Number(this.get(name));
+    return isNaN(value) ? null : value;
+};

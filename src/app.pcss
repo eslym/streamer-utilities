@@ -2,3 +2,18 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@layer utilities {
+    .bg-transparent-placeholder-light {
+        background-image: url(./lib/images/transparent-bg/light.svg);
+        background-position: center;
+    }
+    .bg-transparent-placeholder-dark {
+        background-image: url(./lib/images/transparent-bg/dark.svg);
+        background-position: center;
+    }
+
+    .bg-transparent-placeholder {
+        @apply bg-transparent-placeholder-light dark:bg-transparent-placeholder-dark;
+    }
+}

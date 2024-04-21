@@ -1,0 +1,22 @@
+<script lang="ts">import {page} from '$app/stores';</script>
+
+<svelte:head>
+
+<title>{$page.status} {$page.error?.message} - Streamer Utilities</title>
+</svelte:head>
+
+<main
+    class="container mx-auto prose dark:prose-invert prose-a:link py-2 md:py-6"
+>
+
+# {$page.status} {$page.error?.message}
+
+{#if $page.status === 404}
+
+The page you are looking for does not exist. Please check the URL and try again.
+
+Go back to [home](/).
+
+{/if}
+
+</main>

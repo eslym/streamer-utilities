@@ -1,0 +1,26 @@
+<script lang="ts">import {PUBLIC_GITHUB_REPO} from '$env/static/public';</script>
+
+<svelte:head>
+
+<title>Streamer Utilities</title>
+<meta
+        name="description"
+        content="Streamer Utilities is a collection of tools for streamers and content creators."
+    />
+</svelte:head>
+
+<main
+    class="container mx-auto prose dark:prose-invert prose-a:link py-2 md:py-6"
+>
+
+# Streamer Utilities
+
+Streamer Utilities is a collection of tools for streamers and content creators, including streaming widgets and etc.
+
+This project is powered by [SvelteKit](https://kit.svelte.dev/), [Ripple UI](https://www.ripple-ui.com/), and [Hugeicons](https://hugeicons.com/).
+
+## Contributions
+
+This project is open source and contributions are welcome. You can find the source code on [GitHub]({PUBLIC_GITHUB_REPO}). Please feels free to submit issues and pull requests.
+
+</main>
