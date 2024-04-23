@@ -1,8 +1,14 @@
 <script lang="ts">
-    import SVGClock, { decodeSettings, clockLayouts } from '$lib/components/SVGClock.svelte';
+    import SVGClock, {
+        defaultSettings,
+        decodeSettings,
+        clockLayouts
+    } from '$lib/components/SVGClock.svelte';
     import { page } from '$app/stores';
 
-    $: clockSettings = decodeSettings($page.url.searchParams);
+    let clockSettings = defaultSettings;
+
+    $: if (!import.meta.env.SSR) clockSettings = decodeSettings($page.url.searchParams);
 </script>
 
 <svelte:head>
