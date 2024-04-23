@@ -14,11 +14,12 @@
 <svelte:head>
     <title>Clock</title>
     <style>
+        html,
         body {
-            padding: 0;
-            margin: 0;
-            overflow: hidden;
-            background-color: transparent;
+            padding: 0 !important;
+            margin: 0 !important;
+            overflow: hidden !important;
+            background-color: transparent !important;
         }
     </style>
 </svelte:head>

@@ -68,7 +68,9 @@
         <a
             href="/clock/svg/widget?{encodeSettings($clockSettings)}"
             class="btn btn-solid-primary h-14 py-2 flex flex-col items-center justify-center"
-            on:click|preventDefault={() => {
+            on:click={(ev) => {
+                if (ev.ctrlKey || ev.altKey || ev.shiftKey) return;
+                ev.preventDefault();
                 navigator.clipboard.writeText(
                     $page.url.to(`/clock/svg/widget?${encodeSettings($clockSettings)}`)
                 );
