@@ -13,6 +13,14 @@
 
 <svelte:head>
     <title>Clock</title>
+    <style>
+        body {
+            padding: 0;
+            margin: 0;
+            overflow: hidden;
+            background-color: transparent;
+        }
+    </style>
 </svelte:head>
 
 <div class="w-screen h-screen">
