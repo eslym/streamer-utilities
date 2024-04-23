@@ -5,7 +5,8 @@ type Clock = {
     h24: string;
     min: string;
     sec: string;
-    night: boolean;
+    pm: boolean;
+    blink: boolean;
 };
 
 let clock: Readable<Clock>;
@@ -16,7 +17,8 @@ if (import.meta.env.SSR) {
         h24: '00',
         min: '00',
         sec: '00',
-        night: false
+        pm: false,
+        blink: false
     });
 } else {
     clock = readable<Clock>(
@@ -25,7 +27,8 @@ if (import.meta.env.SSR) {
             h24: '00',
             min: '00',
             sec: '00',
-            night: false
+            pm: false,
+            blink: false
         },
         (set) => {
             const interval = setInterval(() => {
@@ -34,8 +37,9 @@ if (import.meta.env.SSR) {
                 const h24 = now.getHours().toString().padStart(2, '0');
                 const min = now.getMinutes().toString().padStart(2, '0');
                 const sec = now.getSeconds().toString().padStart(2, '0');
-                const night = now.getHours() < 6 || now.getHours() >= 18;
-                set({ h12, h24, min, sec, night });
+                const pm = now.getHours() >= 12;
+                const blink = now.valueOf() % 1000 < 500;
+                set({ h12, h24, min, sec, pm, blink });
             }, 200);
             return () => clearInterval(interval);
         }

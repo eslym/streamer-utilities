@@ -12,7 +12,7 @@
     } from 'hugeicons-svelte';
 
     function getGroup(path: string) {
-        const match = /^\/\(([^\)]+)\)/.exec(path);
+        const match = /^\/\(main\)\/\(([^\)]+)\)/.exec(path);
         return match?.[1];
     }
 
@@ -61,10 +61,10 @@
                                     <span>Clock</span>
                                 </a>
                             </li>
-                            <ul class="menu-items">
+                            <!-- <ul class="menu-items">
                                 <li class="contents">
                                     <a
-                                        href="count-down"
+                                        href="/count-down"
                                         class="menu-item"
                                         class:menu-active={group === 'cd'}
                                     >
@@ -75,7 +75,7 @@
                                         <span>Count down</span>
                                     </a>
                                 </li>
-                            </ul>
+                            </ul> -->
                         </ul>
                     </section>
                 </nav>
@@ -101,7 +101,7 @@
     </div>
     <div class="flex w-full flex-col p-4 gap-2">
         <div class="w-fit">
-            <label for="sidebar-mobile-fixed" class="btn btn-circle sm:hidden">
+            <label for="sidebar-mobile-fixed" class="btn btn-circle sm:hidden sticky top-4 z-30">
                 <Hugeicon icon={Menu01Icon} />
             </label>
         </div>

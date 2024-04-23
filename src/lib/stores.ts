@@ -5,9 +5,8 @@ type Notifier<T> = (val: T) => void;
 const noop: Notifier<any> = () => {};
 
 export function json<T>(store: Writable<string | null | undefined>): Writable<T>;
-export function json<T>(store: Writable<string | null | undefined>, fallback: T): Writable<T>;
 export function json<T>(store: Writable<string | null | undefined>, fallback: () => T): Writable<T>;
-
+export function json<T>(store: Writable<string | null | undefined>, fallback: T): Writable<T>;
 /**
  * Creates a store that contains the parsed JSON of the given store.
  */
@@ -37,14 +36,17 @@ export function json<T>(
  */
 let local: (key: string) => Writable<string | null>;
 
-if (import.meta.env.SSR) {
-    local = () => writable(null);
-} else {
-    const localStorageStores = new Map<
-        string,
-        [Writable<string | null>, Notifier<string | null>]
-    >();
+const localStorageStores = new Map<string, [Writable<string | null>, Notifier<string | null>]>();
 
+if (import.meta.env.SSR) {
+    local = (key: string) => {
+        if (!localStorageStores.has(key)) {
+            const store = writable<string | null>(null);
+            localStorageStores.set(key, [store, noop]);
+        }
+        return localStorageStores.get(key)![0];
+    };
+} else {
     const parent = Object.getPrototypeOf(localStorage) as Storage;
     const newProto = Object.create(parent) as Storage;
 

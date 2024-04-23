@@ -17,3 +17,21 @@
         @apply bg-transparent-placeholder-light dark:bg-transparent-placeholder-dark;
     }
 }
+
+@media (prefers-color-scheme: dark) {
+    :root {
+        --cp-bg-color: #333;
+        --cp-border-color: white;
+        --cp-input-color: #555;
+        --cp-button-hover-color: #777;
+    }
+}
+
+.color-picker {
+    display: block;
+    width: 100%;
+
+    & > label {
+        width: 100%;
+    }
+}
