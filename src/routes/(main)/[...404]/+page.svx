@@ -5,7 +5,9 @@
 
 <main class="container mx-auto prose dark:prose-invert prose-a:link py-2 md:py-6">
 
-# 404 Not Found The page you are looking for does not exist. Please check the URL and try again.
+# 404 Not Found
+
+The page you are looking for does not exist. Please check the URL and try again.
 
 Go back to [home](/).
 
