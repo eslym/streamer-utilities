@@ -1,0 +1,16 @@
+<svelte:head>
+
+<title>Game Helpers - Streamer Utilities</title>
+<meta name="description" content="Some helpers for playing games." />
+</svelte:head>
+
+<main class="container mx-auto prose dark:prose-invert prose-a:link py-2 md:py-6">
+
+# Game Helpers
+
+Some helpers for playing games.
+
+- [Buckshot Roulette](/buckshot)
+- [Phasmophobia (phasmo-cheat-sheat by Ty Bayn)](https://tybayn.github.io/phasmo-cheat-sheet/)
+
+</main>

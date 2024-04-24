@@ -7,8 +7,6 @@
     <meta name="description" content="Count down widgets for streaming." />
 </svelte:head>
 
-<main
-    class="container mx-auto prose dark:prose-invert prose-a:link prose-a:link-primary py-2 md:py-6"
->
+<main class="container mx-auto prose dark:prose-invert prose-a:link py-2 md:py-6">
     <CountDownMD />
 </main>

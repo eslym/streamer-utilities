@@ -17,7 +17,8 @@
       "files": "*.svx",
       "options": {
         "parser": "mdx",
-        "plugins": ["prettier-plugin-tailwindcss", "prettier-plugin-svelte"]
+        "plugins": ["prettier-plugin-tailwindcss", "prettier-plugin-svelte"],
+        "tabWidth": 2
       }
     },
     {

@@ -8,7 +8,8 @@
         Calendar03Icon,
         Settings04Icon,
         InformationCircleIcon,
-        Clock01Icon
+        Clock01Icon,
+        GameController03Icon
     } from 'hugeicons-svelte';
 
     function getGroup(path: string) {
@@ -76,6 +77,24 @@
                                     </a>
                                 </li>
                             </ul> -->
+                        </ul>
+                    </section>
+                    <section class="menu-section px-4 pt-6">
+                        <span class="menu-title">Misc</span>
+                        <ul class="menu-items">
+                            <li class="contents">
+                                <a
+                                    href="/game-helpers"
+                                    class="menu-item"
+                                    class:menu-active={group === 'game'}
+                                >
+                                    <Hugeicon
+                                        icon={GameController03Icon}
+                                        class="h-5 w-5 opacity-75"
+                                    />
+                                    <span>Game Helper</span>
+                                </a>
+                            </li>
                         </ul>
                     </section>
                 </nav>
