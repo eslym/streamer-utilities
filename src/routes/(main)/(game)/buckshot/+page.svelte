@@ -24,8 +24,8 @@
     $: canBeLive = current === 'live' || liveLeft > 0;
     $: canBeBlank = current === 'blank' || blankLeft > 0;
 
-    $: liveChance = shotLeft ? (liveLeft / shotLeft) * 100 : 0;
-    $: blankChance = shotLeft ? (blankLeft / shotLeft) * 100 : 0;
+    $: liveChance = current === 'live' ? 100 : shotLeft ? (liveLeft / shotLeft) * 100 : 0;
+    $: blankChance = current === 'blank' ? 100 : shotLeft ? (blankLeft / shotLeft) * 100 : 0;
 
     function* range(n: number) {
         for (let i = 0; i < n; i++) yield i;
