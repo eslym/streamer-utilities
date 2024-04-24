@@ -30,7 +30,12 @@
     $: liveChance = current === 'live' ? 100 : shotLeft ? (liveLeft / shotLeft) * 100 : 0;
     $: blankChance = current === 'blank' ? 100 : shotLeft ? (blankLeft / shotLeft) * 100 : 0;
 
-    $: if ($data.used.length !== $data.total) clear();
+    $: if ($data.used.length !== $data.total) {
+        $data.used = new Array($data.total).fill(null);
+        $data.live = Math.floor($data.total / 2);
+        $data.index = 0;
+    }
+
     $: if (liveLeft < 0 || blankLeft < 0) clear();
 
     async function clear() {
