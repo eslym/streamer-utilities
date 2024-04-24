@@ -34,9 +34,10 @@ jobs:
 
       - name: build
         env:
-          PUBLIC_GITHUB_REPO: 'https://github.com/${{ github.repository }}'
-          PUBLIC_VERSION: '${{ github.event.head_commit.id }}'
+          PUBLIC_GITHUB_REPO: '${{ github.repository.url }}'
+          GIT_COMMIT: '${{ github.event.after }}'
         run: |
+          bun revision.ts
           bun run build
 
       - name: Upload Artifacts

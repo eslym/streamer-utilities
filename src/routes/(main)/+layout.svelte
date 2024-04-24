@@ -30,7 +30,7 @@
                 <Hugeicon icon={Settings04Icon} class="p-0.5" size="42" />
                 <div class="flex flex-col">
                     <span>Streamer Utilities</span>
-                    <span class="text-xs font-normal text-content2">{PUBLIC_VERSION}</span>
+                    <span class="text-xs font-normal text-content2 truncate">{PUBLIC_VERSION}</span>
                 </div>
             </section>
             <section class="sidebar-content">
