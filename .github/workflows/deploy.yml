@@ -34,7 +34,7 @@ jobs:
 
       - name: build
         env:
-          PUBLIC_GITHUB_REPO: '${{ github.repository.url }}'
+          PUBLIC_GITHUB_REPO: 'https://github.com/${{ github.repository }}'
           GIT_COMMIT: '${{ github.event.after }}'
         run: |
           bun revision.ts
