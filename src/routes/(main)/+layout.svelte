@@ -120,7 +120,7 @@
     </div>
     <div class="flex w-full flex-col p-4 gap-2">
         <div class="w-fit">
-            <label for="sidebar-mobile-fixed" class="btn btn-circle sm:hidden sticky top-4 z-30">
+            <label for="sidebar-mobile-fixed" class="btn btn-circle sm:hidden sticky top-2 z-30">
                 <Hugeicon icon={Menu01Icon} />
             </label>
         </div>
