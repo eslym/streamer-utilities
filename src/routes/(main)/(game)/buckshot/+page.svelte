@@ -98,35 +98,35 @@
                             bind:value={$data.used[index]}
                         >
                             <option value={null}>-</option>
-                            <option value="live" disabled={!canBeLive}>Live Shot</option>
-                            <option value="blank" disabled={!canBeBlank}>Blank Shot</option>
+                            <option value="live" disabled={!canBeLive}>Live</option>
+                            <option value="blank" disabled={!canBeBlank}>Blank</option>
                         </select>
                     </div>
                 {/each}
             </div>
-            <div class="btn-group mt-6">
+            <div class="flex flex-row flex-wrap gap-2 mt-6">
                 <button
-                    class="btn w-32 btn-solid-error"
+                    class="btn w-24 btn-solid-error"
                     disabled={!canBeLive}
                     on:click={() => {
                         $data.used[$data.index] = 'live';
                         if ($data.index < $data.total - 1) $data.index++;
                     }}
                 >
-                    Live Shot
+                    Live
                 </button>
                 <button
-                    class="btn w-32 btn-solid-primary"
+                    class="btn w-24 btn-solid-primary"
                     disabled={!canBeBlank}
                     on:click={() => {
                         $data.used[$data.index] = 'blank';
                         if ($data.index < $data.total - 1) $data.index++;
                     }}
                 >
-                    Blank Shot
+                    Blank
                 </button>
                 <button
-                    class="btn w-32 btn-solid-secondary"
+                    class="btn w-24 btn-solid-secondary"
                     disabled={$data.index === 0}
                     on:click={() => {
                         $data.used[$data.index] = null;
@@ -136,7 +136,7 @@
                     Back
                 </button>
                 <button
-                    class="btn w-32 btn-solid"
+                    class="btn w-24 btn-solid"
                     on:click={() => {
                         $data.used = new Array($data.total).fill(null);
                         $data.index = 0;
