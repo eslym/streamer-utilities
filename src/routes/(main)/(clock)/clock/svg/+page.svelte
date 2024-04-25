@@ -24,7 +24,7 @@
 
 <main class="mx-auto max-w-[600px] w-full flex flex-col gap-4">
     <div
-        class="aspect-video rounded relative"
+        class="aspect-video relative card max-w-full"
         class:bg-transparent-placeholder={$placeholderTheme === null}
         class:bg-transparent-placeholder-light={$placeholderTheme === 'light'}
         class:bg-transparent-placeholder-dark={$placeholderTheme === 'dark'}

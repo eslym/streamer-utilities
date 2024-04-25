@@ -62,7 +62,7 @@
                                     <span>Clock</span>
                                 </a>
                             </li>
-                            <!-- <ul class="menu-items">
+                            <ul class="menu-items">
                                 <li class="contents">
                                     <a
                                         href="/count-down"
@@ -76,7 +76,7 @@
                                         <span>Count down</span>
                                     </a>
                                 </li>
-                            </ul> -->
+                            </ul>
                         </ul>
                     </section>
                     <section class="menu-section px-4 pt-6">
