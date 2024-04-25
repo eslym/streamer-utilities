@@ -1,21 +1,29 @@
-import { metadata, type SVGNumberMetadata } from 'virtual:svg-numbers';
-
-type Font = SVGNumberMetadata & {
-    name: string;
-    url: string;
+export type CharData = {
+    w: number;
+    h: number;
+    mx?: number;
+    my?: number;
+    fg: string[];
+    bg: string[];
 };
 
-const svgs: Record<string, { default: string }> = import.meta.glob('./*.svg', { eager: true });
+export type FontData = {
+    id: string;
+    name: string;
+    mx?: number;
+    my?: number;
+    chars: Record<string, CharData>;
+};
 
-export const fonts: Record<string, Font> = Object.fromEntries(
-    Object.entries(metadata)
-        .map(([name, meta]) => [
-            name,
-            {
-                ...meta,
-                name,
-                url: svgs[`./${name}.svg`].default
-            }
-        ])
-        .sort(([a], [b]) => (a as string).localeCompare(b as string))
+const jsonData: Record<
+    string,
+    {
+        default: FontData;
+    }
+> = import.meta.glob('./fonts/*.json', { eager: true });
+
+export const fonts: Record<string, FontData> = Object.fromEntries(
+    Object.entries(jsonData)
+        .map(([path, { default: font }]) => [path.match(/([^/]+)\.json$/)![1], font])
+        .sort(([_, f1], [__, f2]) => (f1 as FontData).name.localeCompare((f2 as FontData).name))
 );

@@ -3,7 +3,7 @@
         defaultSettings,
         decodeSettings,
         clockLayouts
-    } from '$lib/components/SVGClock.svelte';
+    } from '$lib/components/svg-clock/SVGClock.svelte';
     import { page } from '$app/stores';
 
     let clockSettings = defaultSettings;

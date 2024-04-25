@@ -20,12 +20,12 @@
     $: group = getGroup($page.route.id ?? '');
 </script>
 
-<div class="flex flex-row sm:gap-10">
-    <div class="sm:w-full sm:max-w-[18rem]">
+<div class="flex flex-row md:gap-10">
+    <div class="md:w-full md:max-w-[18rem]">
         <input type="checkbox" id="sidebar-mobile-fixed" class="sidebar-state" />
         <label for="sidebar-mobile-fixed" class="sidebar-overlay"></label>
         <aside
-            class="sidebar sidebar-fixed-left sidebar-mobile h-full justify-start max-sm:fixed max-sm:-translate-x-full"
+            class="sidebar sidebar-fixed-left sidebar-mobile h-full justify-start max-md:fixed max-md:-translate-x-full"
         >
             <section class="sidebar-title items-center p-4">
                 <Hugeicon icon={Settings04Icon} class="p-0.5" size="42" />
@@ -120,7 +120,7 @@
     </div>
     <div class="flex w-full flex-col p-4 gap-2">
         <div class="w-fit">
-            <label for="sidebar-mobile-fixed" class="btn btn-circle sm:hidden sticky top-2 z-30">
+            <label for="sidebar-mobile-fixed" class="btn btn-circle md:hidden sticky top-2 z-30">
                 <Hugeicon icon={Menu01Icon} />
             </label>
         </div>

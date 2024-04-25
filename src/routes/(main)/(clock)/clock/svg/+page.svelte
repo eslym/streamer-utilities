@@ -3,7 +3,7 @@
         clockLayouts,
         defaultSettings,
         encodeSettings
-    } from '$lib/components/SVGClock.svelte';
+    } from '$lib/components/svg-clock/SVGClock.svelte';
     import { json, local } from '$lib/stores';
     import { Hugeicon, Sun03Icon, Moon02Icon, ComputerIcon } from 'hugeicons-svelte';
     import { page } from '$app/stores';
@@ -15,6 +15,12 @@
 
     const store = local('clock/svg');
     const clockSettings = json(store, () => ({ ...defaultSettings }));
+
+    $: if ($clockSettings._v !== defaultSettings._v) $store = null;
+
+    $: if (!$clockSettings.showSeconds) $clockSettings.beforeSeconds = 'dot';
+
+    let ratio: [number, number];
 </script>
 
 <svelte:head>
@@ -29,19 +35,7 @@
         class:bg-transparent-placeholder-light={$placeholderTheme === 'light'}
         class:bg-transparent-placeholder-dark={$placeholderTheme === 'dark'}
     >
-        <SVGClock
-            font={$clockSettings.font}
-            layout={clockLayouts[$clockSettings.layout]}
-            color={$clockSettings.color}
-            twelveHour={$clockSettings.twelveHour}
-            showNight={$clockSettings.showNight}
-            showSeconds={$clockSettings.showSeconds}
-            showSeparator={$clockSettings.showSeparator}
-            useDot={$clockSettings.useDot}
-            blinkColon={$clockSettings.blinkColon}
-            paddingX={$clockSettings.paddingX}
-            paddingY={$clockSettings.paddingY}
-        />
+        <SVGClock settings={$clockSettings} bind:ratio />
         <span
             class="tooltip tooltip-left absolute top-2 right-2"
             data-tooltip={{
@@ -64,6 +58,11 @@
             </button>
         </span>
     </div>
+    {#if ratio}
+        <div class="text-center text-sm">
+            Ratio: {ratio[0]} / {ratio[1]}
+        </div>
+    {/if}
     <span class="tooltip-click tooltip-top" data-tooltip="Copied">
         <a
             href="/clock/svg/widget?{encodeSettings($clockSettings)}"
@@ -81,10 +80,18 @@
         </a>
     </span>
     <div class="form-group">
-        <div class="form-field">
-            <span class="form-label">Text Color</span>
-            <div class="input input-lg max-w-full flex items-center justify-center">
-                <ColorPicker --input-size="28px" bind:hex={$clockSettings.color} />
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-x-2 gap-y-3">
+            <div class="form-field">
+                <span class="form-label">Text Color</span>
+                <div class="input input-lg max-w-full flex items-center justify-center">
+                    <ColorPicker --input-size="28px" bind:hex={$clockSettings.color} />
+                </div>
+            </div>
+            <div class="form-field">
+                <span class="form-label">Secondary Color</span>
+                <div class="input input-lg max-w-full flex items-center justify-center">
+                    <ColorPicker --input-size="28px" bind:hex={$clockSettings.secondaryColor} />
+                </div>
             </div>
         </div>
         <div class="grid grid-cols-2 gap-2">
@@ -92,22 +99,22 @@
                 <label for="font">Font</label>
                 <select id="font" class="select max-w-full" bind:value={$clockSettings.font}>
                     {#each Object.values(fonts) as font}
-                        <option value={font.name}>{font.name}</option>
+                        <option value={font.id}>{font.name}</option>
                     {/each}
                 </select>
             </div>
             <div class="form-field">
                 <label for="layout">Layout</label>
                 <select id="layout" class="select max-w-full" bind:value={$clockSettings.layout}>
-                    {#each Object.keys(clockLayouts) as layout}
-                        <option value={layout}>{layout}</option>
+                    {#each Object.entries(clockLayouts) as [id, layout]}
+                        <option value={id}>{layout.name}</option>
                     {/each}
                 </select>
             </div>
         </div>
         <div class="grid grid-cols-2 gap-2">
             <div class="form-field">
-                <span></span>
+                <span class="form-label">&nbsp;</span>
                 <label>
                     <input
                         type="checkbox"
@@ -118,16 +125,14 @@
                 </label>
             </div>
             <div class="form-field">
-                <span></span>
+                <span class="form-label">&nbsp;</span>
                 <label>
                     <input type="checkbox" bind:checked={$clockSettings.showNight} class="switch" />
                     Show AM/PM
                 </label>
             </div>
-        </div>
-        <div class="grid grid-cols-2 gap-2">
             <div class="form-field">
-                <span></span>
+                <span class="form-label">&nbsp;</span>
                 <label>
                     <input
                         type="checkbox"
@@ -138,35 +143,78 @@
                 </label>
             </div>
             <div class="form-field">
-                <span></span>
-                <label>
-                    <input
-                        type="checkbox"
-                        bind:checked={$clockSettings.showSeparator}
-                        class="switch"
-                    />
-                    Show Separator
-                </label>
-            </div>
-        </div>
-        <div class="grid grid-cols-2 gap-2">
-            <div class="form-field">
-                <span></span>
+                <span class="form-label">&nbsp;</span>
                 <label>
                     <input
                         type="checkbox"
                         bind:checked={$clockSettings.blinkColon}
                         class="switch"
                     />
-                    Blink Separator
+                    Blink Colon
                 </label>
             </div>
-            <div class="form-field">
-                <span></span>
-                <label>
-                    <input type="checkbox" bind:checked={$clockSettings.useDot} class="switch" />
-                    Use dot for seconds
-                </label>
+        </div>
+        <div class="form-field">
+            <span class="form-label">Before Minutes</span>
+            <div class="pagination pagination-compact flex felx-row w-full">
+                <input
+                    id="min-none"
+                    type="radio"
+                    value="none"
+                    bind:group={$clockSettings.beforeMinutes}
+                />
+                <label for="min-none" class="btn flex-grow">None</label>
+                <input
+                    id="min-space"
+                    type="radio"
+                    value="space"
+                    bind:group={$clockSettings.beforeMinutes}
+                />
+                <label for="min-space" class="btn flex-grow">Space</label>
+                <input
+                    id="min-colon"
+                    type="radio"
+                    value="colon"
+                    bind:group={$clockSettings.beforeMinutes}
+                />
+                <label for="min-colon" class="btn flex-grow">Colon</label>
+            </div>
+        </div>
+        <div class="form-field">
+            <span class="form-label">Before Seconds</span>
+            <div class="pagination pagination-compact flex felx-row w-full">
+                <input
+                    disabled={!$clockSettings.showSeconds}
+                    id="sec-none"
+                    type="radio"
+                    value="none"
+                    bind:group={$clockSettings.beforeSeconds}
+                />
+                <label for="sec-none" class="btn flex-grow">None</label>
+                <input
+                    disabled={!$clockSettings.showSeconds}
+                    id="sec-space"
+                    type="radio"
+                    value="space"
+                    bind:group={$clockSettings.beforeSeconds}
+                />
+                <label for="sec-space" class="btn flex-grow">Space</label>
+                <input
+                    disabled={!$clockSettings.showSeconds}
+                    id="sec-colon"
+                    type="radio"
+                    value="colon"
+                    bind:group={$clockSettings.beforeSeconds}
+                />
+                <label for="sec-colon" class="btn flex-grow">Colon</label>
+                <input
+                    disabled={!$clockSettings.showSeconds}
+                    id="sec-dot"
+                    type="radio"
+                    value="dot"
+                    bind:group={$clockSettings.beforeSeconds}
+                />
+                <label for="sec-dot" class="btn flex-grow">Dot</label>
             </div>
         </div>
         <div class="form-field">
