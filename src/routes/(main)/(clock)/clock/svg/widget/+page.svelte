@@ -25,17 +25,5 @@
 </svelte:head>
 
 <div class="w-screen h-screen">
-    <SVGClock
-        font={clockSettings.font}
-        layout={clockLayouts[clockSettings.layout]}
-        color={clockSettings.color}
-        twelveHour={clockSettings.twelveHour}
-        showNight={clockSettings.showNight}
-        showSeconds={clockSettings.showSeconds}
-        showSeparator={clockSettings.showSeparator}
-        useDot={clockSettings.useDot}
-        blinkColon={clockSettings.blinkColon}
-        paddingX={clockSettings.paddingX}
-        paddingY={clockSettings.paddingY}
-    />
+    <SVGClock settings={clockSettings} />
 </div>
