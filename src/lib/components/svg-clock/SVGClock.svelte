@@ -76,7 +76,8 @@
             if (key in mapProp) {
                 if (!mapProp[key]) continue;
                 const prop = mapProp[key];
-                const type = typeof defaultSettings[prop];
+                const def = defaultSettings[prop];
+                const type = typeof def;
                 switch (type) {
                     case 'string':
                         (settings as any)[prop] = value;
@@ -85,7 +86,7 @@
                         (settings as any)[prop] = Number(value);
                         break;
                     case 'boolean':
-                        (settings as any)[prop] = positiveString.has(value);
+                        (settings as any)[prop] = parseBoolean(value, def as boolean);
                         break;
                 }
             }
@@ -122,7 +123,7 @@
     import { fonts } from '$lib/svg-numbers';
     import { onresize } from '$lib/actions';
     import { tick, type ComponentType, SvelteComponent } from 'svelte';
-    import { hcf, positiveString } from '$lib/utils';
+    import { hcf, parseBoolean, positiveString } from '$lib/utils';
     import { browser } from '$app/environment';
 
     export let settings: ClockSettings;

@@ -219,7 +219,7 @@
         </div>
         <div class="form-field">
             <label for="px" class="form-label">Padding X</label>
-            <div class="input max-w-full flex items-center justify-center">
+            <div class="input input-solid max-w-full flex items-center justify-center">
                 <input
                     id="px"
                     type="range"
@@ -233,7 +233,7 @@
         </div>
         <div class="form-field">
             <label for="py" class="form-label">Padding Y</label>
-            <div class="input max-w-full flex items-center justify-center">
+            <div class="input input-solid max-w-full flex items-center justify-center">
                 <input
                     id="py"
                     type="range"

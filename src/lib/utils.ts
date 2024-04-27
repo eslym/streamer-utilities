@@ -59,3 +59,22 @@ export function css(obj: Record<string, string | undefined | null | false>) {
         .map(([key, value]) => `${key}:${value}`)
         .join(';');
 }
+
+export function parseBoolean(value: string | null | undefined, def: boolean = false): boolean {
+    return def
+        ? !negativeString.has(value?.toLowerCase())
+        : positiveString.has(value?.toLowerCase());
+}
+
+export type Sides = { mode: 1 | 2 | 4; sides: number[] };
+
+export function decodeSides(sides: string, fallback: number = 0): Sides {
+    const parts = sides
+        .split('|')
+        .map(parseInt)
+        .map((v) => (isNaN(v) ? fallback : v));
+    if (parts.length === 0) return { mode: 1, sides: [0] };
+    if (parts.length === 1) return { mode: 1, sides: parts.slice(0, 1) };
+    if (parts.length < 4) return { mode: 2, sides: parts.slice(0, 2) };
+    return { mode: 4, sides: parts.slice(0, 4) };
+}

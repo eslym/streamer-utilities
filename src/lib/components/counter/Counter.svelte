@@ -7,6 +7,7 @@
         data: [string, string[]][][];
 
         '--counter-group-gap'?: string;
+        '--counter-digit-gap'?: string;
         '--counter-padding'?: string;
         '--counter-radius'?: string;
         '--counter-bg'?: string;
@@ -21,7 +22,7 @@
 <div class="counter-group">
     {#each data as group}
         <div class="digit-group">
-            {#each group as [char, chars]}
+            {#each group as [char, chars] (chars.join(''))}
                 <CounterNumber {char} {chars} {easing} {animationDuration} />
             {/each}
         </div>
@@ -30,7 +31,7 @@
 
 <style lang="postcss">
     .counter-group {
-        @apply flex max-w-max select-none flex-row;
+        @apply flex min-w-max max-w-max select-none flex-row;
         gap: var(--counter-group-gap, 0.5rem);
         padding: var(--counter-padding, 0.5rem);
         border-radius: var(--counter-radius, 0.5rem);
@@ -38,6 +39,6 @@
     }
     .digit-group {
         @apply flex flex-row;
-        gap: var(--counter-group-gap, 0.15rem);
+        gap: var(--counter-digit-gap, 0.15rem);
     }
 </style>

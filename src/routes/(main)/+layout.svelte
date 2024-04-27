@@ -119,8 +119,8 @@
         </aside>
     </div>
     <div class="flex w-full flex-col p-4 gap-2">
-        <div class="w-fit">
-            <label for="sidebar-mobile-fixed" class="btn btn-circle md:hidden sticky top-2 z-30">
+        <div class="w-fit sticky top-2 z-30 pointer-events-none">
+            <label for="sidebar-mobile-fixed" class="btn btn-circle md:hidden pointer-events-auto">
                 <Hugeicon icon={Menu01Icon} />
             </label>
         </div>

@@ -1,13 +1,17 @@
 <script lang="ts">
-    import SVGClock, {
+    import GoogleFontLoader from '$lib/components/GoogleFontLoader.svelte';
+    import { css } from '$lib/utils';
+    import CounterStyleClock, {
         defaultSettings,
-        decodeSettings
-    } from '$lib/components/svg-clock/SVGClock.svelte';
+        decodeSettings,
+        toProps
+    } from '$lib/components/CounterStyleClock.svelte';
     import { page } from '$app/stores';
 
     let clockSettings = defaultSettings;
 
     $: if (!import.meta.env.SSR) clockSettings = decodeSettings($page.url.searchParams);
+    $: calculated = toProps(clockSettings);
 </script>
 
 <svelte:head>
@@ -23,6 +27,10 @@
     </style>
 </svelte:head>
 
-<div class="w-screen h-screen">
-    <SVGClock settings={clockSettings} />
+{#if clockSettings.googleFont}
+    <GoogleFontLoader families={[clockSettings.digitFont]} />
+{/if}
+
+<div style={css(calculated.styles)}>
+    <CounterStyleClock {...calculated.props} />
 </div>

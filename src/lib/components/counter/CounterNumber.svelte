@@ -1,5 +1,5 @@
 <script lang="ts">
-    import { quadIn, linear } from 'svelte/easing';
+    import { quadIn, linear, quartIn } from 'svelte/easing';
     import type { EasingFunction, TransitionConfig } from 'svelte/transition';
 
     type $$Props = {
@@ -65,6 +65,21 @@
         };
     }
 
+    function dim(
+        _: HTMLElement,
+        opts: { ease?: EasingFunction; duration?: number; delay?: number; inverted?: boolean }
+    ): TransitionConfig {
+        const ease = opts.ease ?? quadIn;
+        return {
+            duration: opts.duration ?? 150,
+            delay: opts.delay ?? 0,
+            css(t, u) {
+                const s = quartIn(opts.inverted ? t : u);
+                return `filter: brightness(${1 - s * 0.5});`;
+            }
+        };
+    }
+
     function sortval(n: number) {
         return Math.abs(n) + (n < 0 ? 0.5 : 0);
     }
@@ -84,26 +99,29 @@
 </script>
 
 <div class="digit">
-    <div
-        class="digit-card"
-        class:digit-top={flipDirection > 0}
-        class:digit-bottom={flipDirection < 0}
-    >
-        {chars[_next]}
-    </div>
-    <div
-        class="digit-card"
-        class:digit-top={flipDirection < 0}
-        class:digit-bottom={flipDirection > 0}
-    >
-        {chars[_current]}
-    </div>
     {#key _next}
+        <div
+            class="digit-card"
+            class:digit-top={flipDirection > 0}
+            class:digit-bottom={flipDirection < 0}
+            in:dim={{ ease: easeFn, duration: _duration, inverted: false }}
+        >
+            {chars[_next]}
+        </div>
+        <div
+            class="digit-card"
+            class:digit-top={flipDirection < 0}
+            class:digit-bottom={flipDirection > 0}
+            in:dim={{ ease: easeFn, duration: _duration, inverted: true }}
+        >
+            {chars[_current]}
+        </div>
         <div class="digit-flip" in:flip={{ ease: easeFn, duration: _duration }} on:introend={next}>
             <div
                 class="digit-card"
                 class:digit-top={flipDirection < 0}
                 class:digit-bottom={flipDirection > 0}
+                in:dim={{ ease: easeFn, duration: _duration, inverted: false }}
             >
                 {chars[_next]}
             </div>
@@ -111,6 +129,7 @@
                 class="digit-card digit-back"
                 class:digit-top={flipDirection > 0}
                 class:digit-bottom={flipDirection < 0}
+                in:dim={{ ease: easeFn, duration: _duration, inverted: true }}
             >
                 {chars[_current]}
             </div>
@@ -121,11 +140,11 @@
 <style lang="postcss">
     .digit {
         @apply relative;
-        width: var(--counter-digit-width, 32px);
+        width: var(--counter-digit-width, 48px);
         height: var(--counter-digit-height, 64px);
-        color: var(--counter-digit-text-color, #402e32);
-        font-family: var(--counter-digit-font, monospace);
-        font-size: var(--counter-digit-font-size, 48px);
+        color: var(--counter-digit-text-color, #dfe0df);
+        font-family: var(--counter-digit-font, monospace), monospace;
+        font-size: var(--counter-digit-font-size, 64px);
         perspective: 1000px;
         border-radius: var(--counter-digit-radius, 4px);
         background-color: var(--counter-digit-bg, #b78670);
@@ -140,7 +159,7 @@
             padding: var(--counter-digit-padding, auto);
             justify-content: var(--counter-digit-justify, center);
             align-items: var(--counter-digit-align, center);
-            background-color: var(--counter-digit-card-color, #dfe0df);
+            background-color: var(--counter-digit-card-color, #402e32);
             border-radius: var(--counter-digit-radius, 4px);
         }
 
