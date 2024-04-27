@@ -325,6 +325,16 @@
             </div>
         </div>
         <div class="form-field">
+            <label for="digit-divider" class="form-label">Digits Divider</label>
+            <input
+                type="number"
+                id="digit-divider"
+                class="input input-solid max-w-full"
+                bind:value={$settings.digitDivider}
+                placeholder="2px"
+            />
+        </div>
+        <div class="form-field">
             <span class="form-label">Digit Alignment</span>
             <div class="input input-solid max-w-full h-auto grid grid-cols-3 p-2 gap-2">
                 <div class="flex justify-center">
