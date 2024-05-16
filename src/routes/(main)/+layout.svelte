@@ -12,12 +12,7 @@
         GameController03Icon
     } from 'hugeicons-svelte';
 
-    function getGroup(path: string) {
-        const match = /^\/\(main\)\/\(([^\)]+)\)/.exec(path);
-        return match?.[1];
-    }
-
-    $: group = getGroup($page.route.id ?? '');
+    $: group = $page.data.group;
 </script>
 
 <div class="flex flex-row md:gap-10">
