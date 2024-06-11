@@ -20,7 +20,17 @@
 
     $: if (!$clockSettings.showSeconds) $clockSettings.beforeSeconds = 'dot';
 
-    let ratio: [number, number];
+    let ratio: [number, number] = [0, 0];
+
+    function buildSearch(params: URLSearchParams, width: number, height: number) {
+        const r = Math.floor(Math.min(1920 / width, 1080 / height));
+        params.set('layer-name', 'Clock');
+        params.set('layer-width', `${width * r}`);
+        params.set('layer-height', `${height * r}`);
+        return params;
+    }
+
+    $: widgetParams = buildSearch(encodeSettings($clockSettings), ratio[0], ratio[1]);
 </script>
 
 <svelte:head>
@@ -65,14 +75,12 @@
     {/if}
     <span class="tooltip-click tooltip-top" data-tooltip="Copied">
         <a
-            href="/clock/svg/widget?{encodeSettings($clockSettings)}"
+            href="/clock/svg/widget?{widgetParams}"
             class="btn btn-solid-primary h-14 py-2 flex flex-col items-center justify-center"
             on:click={(ev) => {
                 if (ev.ctrlKey || ev.altKey || ev.shiftKey) return;
                 ev.preventDefault();
-                navigator.clipboard.writeText(
-                    $page.url.to(`/clock/svg/widget?${encodeSettings($clockSettings)}`)
-                );
+                navigator.clipboard.writeText($page.url.to(`/clock/svg/widget?${widgetParams}`));
             }}
         >
             <span class="text-base font-bold">Drag this to OBS</span>

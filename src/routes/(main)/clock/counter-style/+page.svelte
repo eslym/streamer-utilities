@@ -59,6 +59,15 @@
         }
     }
 
+    function buildSearch(params: URLSearchParams, width: number, height: number) {
+        params.set('layer-name', 'Clock');
+        params.set('layer-width', `${width}`);
+        params.set('layer-height', `${height}`);
+        return params;
+    }
+
+    $: widgetParams = buildSearch(encodeSettings($settings), clockWidth, clockHeight);
+
     onMount(() => {
         updateSize();
         return () => clearTimeout(timeout);
@@ -128,13 +137,13 @@
     </div>
     <span class="tooltip-click tooltip-top" data-tooltip="Copied">
         <a
-            href="/clock/counter-style/widget?{encodeSettings($settings)}"
+            href="/clock/counter-style/widget?{widgetParams}"
             class="btn btn-solid-primary h-14 py-2 flex flex-col items-center justify-center"
             on:click={(ev) => {
                 if (ev.ctrlKey || ev.altKey || ev.shiftKey) return;
                 ev.preventDefault();
                 navigator.clipboard.writeText(
-                    $page.url.to(`/clock/counter-style/widget?${encodeSettings($settings)}`)
+                    $page.url.to(`/clock/counter-style/widget?${widgetParams}`)
                 );
             }}
         >
