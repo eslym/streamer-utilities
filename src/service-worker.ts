@@ -10,6 +10,8 @@ const UNCACHEABLE = new Set(['/_app/version.json', '/_app/env.js']);
 
 const GOOGLE_FONTS_ORIGINS = new Set(['https://fonts.gstatic.com', 'https://fonts.googleapis.com']);
 
+const FONT_CACHE = 'google-fonts';
+
 // Create a unique cache name for this deployment
 const CACHE = `cache-${version}`;
 const ASSETS = [
@@ -33,7 +35,7 @@ self.addEventListener('activate', ((event: ExtendableEvent) => {
     // Remove previous cached data from disk
     async function deleteOldCaches() {
         for (const key of await caches.keys()) {
-            if (key !== CACHE) await caches.delete(key);
+            if (key !== CACHE && key !== FONT_CACHE) await caches.delete(key);
         }
     }
 
@@ -49,7 +51,7 @@ self.addEventListener('fetch', ((event: FetchEvent) => {
 
     if (url.origin !== location.origin) {
         if (GOOGLE_FONTS_ORIGINS.has(url.origin)) {
-            event.respondWith(tryCacheRespond(event.request));
+            event.respondWith(gfontsCache(event.request));
         }
         return;
     }
@@ -66,8 +68,8 @@ async function respond(pathname: string) {
     return cache.match(pathname) as Promise<Response>;
 }
 
-async function tryCacheRespond(request: Request) {
-    const cache = await caches.open(CACHE);
+async function gfontsCache(request: Request) {
+    const cache = await caches.open(FONT_CACHE);
     try {
         const fresh = await fetch(request);
         await cache.put(request, fresh.clone());
