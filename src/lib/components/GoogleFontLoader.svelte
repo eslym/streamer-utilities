@@ -1,9 +1,13 @@
-<script lang="ts" context="module">
+<script lang="ts" module>
     const googleFontURL = new URL(`https://fonts.googleapis.com/css2`);
 </script>
 
 <script lang="ts">
-    export let families: string[];
+    interface Props {
+        families: string[];
+    }
+
+    let { families }: Props = $props();
 </script>
 
 <svelte:head>

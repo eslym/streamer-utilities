@@ -8,10 +8,12 @@
     } from '$lib/components/CounterStyleClock.svelte';
     import { page } from '$app/stores';
 
-    let clockSettings = defaultSettings;
+    let clockSettings = $state(defaultSettings);
 
-    $: if (!import.meta.env.SSR) clockSettings = decodeSettings($page.url.searchParams);
-    $: calculated = toProps(clockSettings);
+    $effect.pre(() => {
+        if (!import.meta.env.SSR) clockSettings = decodeSettings($page.url.searchParams);
+    });
+    let calculated = $derived(toProps(clockSettings));
 </script>
 
 <svelte:head>

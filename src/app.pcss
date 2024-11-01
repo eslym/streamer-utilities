@@ -3,6 +3,12 @@
 @tailwind components;
 @tailwind utilities;
 
+@layer base {
+    * {
+        @apply scrollbar-thin;
+    }
+}
+
 @layer utilities {
     .bg-transparent-placeholder-light {
         background-image: url(./lib/images/transparent-bg/light.svg);

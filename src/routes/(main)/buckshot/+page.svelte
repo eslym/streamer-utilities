@@ -18,26 +18,6 @@
 
     export const data = json<BuckshotHelperData>(local('game/buckshot'), defaultData);
 
-    $: if ($data.live >= $data.total) $data.live = $data.total - 1;
-    $: shotLeft = $data.used.filter((v) => v === null).length;
-    $: liveLeft = $data.live - $data.used.filter((v) => v === 'live').length;
-    $: blankLeft = $data.total - $data.live - $data.used.filter((v) => v === 'blank').length;
-
-    $: current = $data.used[$data.index];
-    $: canBeLive = current === 'live' || liveLeft > 0;
-    $: canBeBlank = current === 'blank' || blankLeft > 0;
-
-    $: liveChance = current === 'live' ? 100 : shotLeft ? (liveLeft / shotLeft) * 100 : 0;
-    $: blankChance = current === 'blank' ? 100 : shotLeft ? (blankLeft / shotLeft) * 100 : 0;
-
-    $: if ($data.used.length !== $data.total) {
-        $data.used = new Array($data.total).fill(null);
-        $data.live = Math.floor($data.total / 2);
-        $data.index = 0;
-    }
-
-    $: if (liveLeft < 0 || blankLeft < 0) clear();
-
     async function clear() {
         await tick();
         $data.used = new Array($data.total).fill(null);
@@ -47,6 +27,33 @@
     function* range(n: number) {
         for (let i = 0; i < n; i++) yield i;
     }
+    $effect.pre(() => {
+        if ($data.live >= $data.total) $data.live = $data.total - 1;
+    });
+    let shotLeft = $derived($data.used.filter((v) => v === null).length);
+    let liveLeft = $derived($data.live - $data.used.filter((v) => v === 'live').length);
+    let blankLeft = $derived(
+        $data.total - $data.live - $data.used.filter((v) => v === 'blank').length
+    );
+    let current = $derived($data.used[$data.index]);
+    let canBeLive = $derived(current === 'live' || liveLeft > 0);
+    let canBeBlank = $derived(current === 'blank' || blankLeft > 0);
+    let liveChance = $derived(
+        current === 'live' ? 100 : shotLeft ? (liveLeft / shotLeft) * 100 : 0
+    );
+    let blankChance = $derived(
+        current === 'blank' ? 100 : shotLeft ? (blankLeft / shotLeft) * 100 : 0
+    );
+    $effect.pre(() => {
+        if ($data.used.length !== $data.total) {
+            $data.used = new Array($data.total).fill(null);
+            $data.live = Math.floor($data.total / 2);
+            $data.index = 0;
+        }
+    });
+    $effect.pre(() => {
+        if (liveLeft < 0 || blankLeft < 0) clear();
+    });
 </script>
 
 <svelte:head>
@@ -98,7 +105,7 @@
                 <button
                     class="btn w-24 btn-solid-error"
                     disabled={!canBeLive}
-                    on:click={() => {
+                    onclick={() => {
                         $data.used[$data.index] = 'live';
                         if ($data.index < $data.total - 1) $data.index++;
                     }}
@@ -108,7 +115,7 @@
                 <button
                     class="btn w-24 btn-solid-primary"
                     disabled={!canBeBlank}
-                    on:click={() => {
+                    onclick={() => {
                         $data.used[$data.index] = 'blank';
                         if ($data.index < $data.total - 1) $data.index++;
                     }}
@@ -118,7 +125,7 @@
                 <button
                     class="btn w-24 btn-solid-secondary"
                     disabled={$data.index === 0}
-                    on:click={() => {
+                    onclick={() => {
                         $data.used[$data.index] = null;
                         $data.index--;
                     }}
@@ -128,7 +135,7 @@
                 <button
                     class="btn w-24 btn-solid"
                     disabled={$data.used.every((v) => v === null)}
-                    on:click={() => {
+                    onclick={() => {
                         $data.used = new Array($data.total).fill(null);
                         $data.index = 0;
                     }}

@@ -6,7 +6,7 @@
         encodeSettings,
         toProps
     } from '$lib/components/CounterStyleClock.svelte';
-    import { Hugeicon, Sun03Icon, Moon02Icon, ComputerIcon, GoogleIcon } from 'hugeicons-svelte';
+    import { Sun03Icon, Moon02Icon, ComputerIcon, GoogleIcon } from 'hugeicons-svelte';
     import cloneDeep from 'lodash.clonedeep';
     import { css } from '$lib/utils';
     import { page } from '$app/stores';
@@ -24,22 +24,14 @@
 
     let scale = json(local('clock/counter-style/preview-scale'), 1);
 
-    let googleFonts: string[] = $settings.googleFont ? [$settings.digitFont] : [];
+    let googleFonts: string[] = $state($settings.googleFont ? [$settings.digitFont] : []);
 
     let timeout: any = undefined;
 
-    let clockEl: HTMLDivElement;
+    let clockEl: HTMLDivElement = $state(undefined as any);
 
-    let clockWidth = 0;
-    let clockHeight = 0;
-
-    $: calculated = toProps($settings);
-
-    $: if (
-        $settings.digitFont !== googleFonts[0] ||
-        Number($settings.googleFont) !== googleFonts.length
-    )
-        updateGoogleFont();
+    let clockWidth = $state(0);
+    let clockHeight = $state(0);
 
     function updateGoogleFont(..._: any[]) {
         clearTimeout(timeout);
@@ -66,12 +58,26 @@
         return params;
     }
 
-    $: widgetParams = buildSearch(encodeSettings($settings), clockWidth, clockHeight);
-
     onMount(() => {
         updateSize();
         return () => clearTimeout(timeout);
     });
+    let calculated = $derived(toProps($settings));
+    $effect.pre(() => {
+        if (
+            $settings.digitFont !== googleFonts[0] ||
+            Number($settings.googleFont) !== googleFonts.length
+        )
+            updateGoogleFont();
+    });
+    let widgetParams = $derived(buildSearch(encodeSettings($settings), clockWidth, clockHeight));
+
+    let ThemeIcon = $derived(
+        {
+            light: Sun03Icon,
+            dark: Moon02Icon
+        }[$placeholderTheme ?? ''] ?? ComputerIcon
+    );
 </script>
 
 <svelte:head>
@@ -101,16 +107,11 @@
         >
             <button
                 class="btn-circle btn btn-solid-secondary"
-                on:click={() =>
+                onclick={() =>
                     ($placeholderTheme =
                         themes[(themes.indexOf($placeholderTheme) + 1) % themes.length])}
             >
-                <Hugeicon
-                    icon={{
-                        light: Sun03Icon,
-                        dark: Moon02Icon
-                    }[$placeholderTheme ?? ''] ?? ComputerIcon}
-                />
+                <ThemeIcon />
             </button>
         </span>
         <span class="text-center absolute bottom-2 left-0 right-0 drop-shadow">
@@ -132,14 +133,14 @@
             {($scale * 100).toFixed(2).replace(/\.?0+$/, '')}%
         </span>
         <datalist id="scale-ticks">
-            <option value="1" />
+            <option value="1"></option>
         </datalist>
     </div>
     <span class="tooltip-click tooltip-top" data-tooltip="Copied">
         <a
             href="/clock/counter-style/widget?{widgetParams}"
             class="btn btn-solid-primary h-14 py-2 flex flex-col items-center justify-center"
-            on:click={(ev) => {
+            onclick={(ev) => {
                 if (ev.ctrlKey || ev.altKey || ev.shiftKey) return;
                 ev.preventDefault();
                 navigator.clipboard.writeText(
@@ -227,9 +228,9 @@
                     <button
                         class="btn btn-circle"
                         class:btn-primary={$settings.googleFont}
-                        on:click={() => ($settings.googleFont = !$settings.googleFont)}
+                        onclick={() => ($settings.googleFont = !$settings.googleFont)}
                     >
-                        <Hugeicon icon={GoogleIcon} />
+                        <GoogleIcon />
                     </button>
                 </span>
             </div>
@@ -321,15 +322,15 @@
                 />
                 <span class="w-16 text-right">{$settings.animationDuration}ms</span>
                 <datalist id="duration-ticks">
-                    <option value="100" />
-                    <option value="150" />
-                    <option value="200" />
-                    <option value="250" />
-                    <option value="300" />
-                    <option value="350" />
-                    <option value="400" />
-                    <option value="450" />
-                    <option value="500" />
+                    <option value="100"></option>
+                    <option value="150"></option>
+                    <option value="200"></option>
+                    <option value="250"></option>
+                    <option value="300"></option>
+                    <option value="350"></option>
+                    <option value="400"></option>
+                    <option value="450"></option>
+                    <option value="500"></option>
                 </datalist>
             </div>
         </div>
@@ -379,7 +380,7 @@
         <SidesConfig bind:sides={$settings.padding} defaultSides={defaultSettings.padding} />
         <div class="divider mb-0">Digit Padding</div>
         <SidesConfig bind:sides={$settings.digitPadding} defaultSides={defaultSettings.padding} />
-        <button type="button" class="btn my-12" on:click={() => ($store = null)}>
+        <button type="button" class="btn my-12" onclick={() => ($store = null)}>
             Reset to Default
         </button>
     </div>

@@ -1,19 +1,22 @@
 <script lang="ts">
     import type { FontData } from '$lib/svg-numbers';
 
-    export let char: string;
-    export let font: FontData;
-    export let primaryColor: string;
-    export let secondaryColor: string;
+    interface Props {
+        char: string;
+        font: FontData;
+        primaryColor: string;
+        secondaryColor: string;
+        scaleX?: number;
+        scaleY?: number;
+    }
 
-    export let scaleX = 1;
-    export let scaleY = 1;
+    let { char, font, primaryColor, secondaryColor, scaleX = 1, scaleY = 1 }: Props = $props();
 
-    $: data = font.chars[char];
-    $: mx = (data.mx ?? font.mx ?? 0) * scaleX;
-    $: my = (data.my ?? font.my ?? 0) * scaleY;
-    $: width = data.w * scaleX;
-    $: height = data.h * scaleY;
+    let data = $derived(font.chars[char]);
+    let mx = $derived((data.mx ?? font.mx ?? 0) * scaleX);
+    let my = $derived((data.my ?? font.my ?? 0) * scaleY);
+    let width = $derived(data.w * scaleX);
+    let height = $derived(data.h * scaleY);
 </script>
 
 <svg style="margin: {my}px {mx}px" {width} {height} viewBox="0 0 {width} {height}">

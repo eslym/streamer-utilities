@@ -1,16 +1,18 @@
-<script lang="ts" context="module">
+<script lang="ts" module>
     let globalId = 0;
 </script>
 
 <script lang="ts">
     import type { Sides } from '$lib/utils';
 
-    export let sides: Sides;
-    export let defaultSides: Sides;
+    interface Props {
+        sides: Sides;
+        defaultSides: Sides;
+    }
+
+    let { sides = $bindable(), defaultSides }: Props = $props();
 
     const id = globalId++;
-
-    $: syncSides(sides, defaultSides);
 
     export const modeMap = {
         1: {
@@ -42,6 +44,9 @@
             sides: sides.sides.concat(expand.slice(sides.sides.length, sides.mode))
         };
     }
+    $effect.pre(() => {
+        syncSides(sides, defaultSides);
+    });
 </script>
 
 <div class="form-field">

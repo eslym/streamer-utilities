@@ -1,5 +1,5 @@
-<script lang="ts" context="module">
-    type ClockProps = Omit<ComponentProps<Counter>, 'data'> & {
+<script lang="ts" module>
+    type ClockProps = Omit<ComponentProps<typeof Counter>, 'data'> & {
         twelveHour: boolean;
         showSeconds: boolean;
     };
@@ -181,11 +181,7 @@
     import { clock, type Clock } from '$lib/clock';
     import type { ComponentProps } from 'svelte';
 
-    type $$Props = ClockProps;
-
-    export let twelveHour: boolean;
-    export let showSeconds: boolean;
-    export let animationDuration: number = 150;
+    let { twelveHour, showSeconds, animationDuration = 150 }: ClockProps = $props();
 
     function clockGroup(clock: Clock, twelve: boolean, seconds: boolean) {
         const hrs = clock[twelve ? 'h12' : 'h24'].split('');

@@ -2,46 +2,26 @@
     import { quadIn, linear, quartIn } from 'svelte/easing';
     import type { EasingFunction, TransitionConfig } from 'svelte/transition';
 
-    type $$Props = {
+    interface Props {
         chars: string[];
         char: string;
         easing?: EasingFunction;
         animationDuration?: number;
+        undefined?: string;
+    }
 
-        '--counter-digit-width'?: string;
-        '--counter-digit-height'?: string;
-        '--counter-digit-text-color'?: string;
-        '--counter-digit-font'?: string;
-        '--counter-digit-font-size'?: string;
-        '--counter-digit-separator'?: string;
-        '--counter-digit-padding'?: string;
-        '--counter-digit-justify'?: string;
-        '--counter-digit-align'?: string;
-        '--counter-digit-card-color'?: string;
-        '--counter-digit-radius'?: string;
-        '--counter-digit-bg'?: string;
-    };
+    let { chars, char, easing = quadIn, animationDuration = $bindable(150) }: Props = $props();
 
-    export let chars: string[];
-    export let char: string;
+    let index = $derived(chars.indexOf(char));
 
-    export let easing = quadIn;
-    export let animationDuration = 150;
+    let _current = $state(index);
+    let _next = $state(index);
 
-    $: index = chars.indexOf(char);
+    let flipDirection = $state(1);
 
-    let _current = index;
-    let _next = index;
+    let easeFn = $state(linear);
 
-    let flipDirection = 1;
-
-    let easeFn = linear;
-
-    let _duration = animationDuration;
-
-    $: if (animationDuration < 0) animationDuration = 0;
-    $: if (_next === _current && _next !== index) next();
-    $: if (_next === undefined || _current === undefined) _next = _current = index;
+    let _duration = $state(animationDuration);
 
     function capped(n: number) {
         return (n + chars.length) % chars.length;
@@ -96,6 +76,15 @@
             _duration = easeFn === easing ? animationDuration : Math.floor(animationDuration / 2);
         }
     }
+    $effect.pre(() => {
+        if (animationDuration < 0) animationDuration = 0;
+    });
+    $effect.pre(() => {
+        if (_next === undefined || _current === undefined) _next = _current = index;
+    });
+    $effect.pre(() => {
+        if (_next === _current && _next !== index) next();
+    });
 </script>
 
 <div class="digit">
@@ -116,7 +105,7 @@
         >
             {chars[_current]}
         </div>
-        <div class="digit-flip" in:flip={{ ease: easeFn, duration: _duration }} on:introend={next}>
+        <div class="digit-flip" in:flip={{ ease: easeFn, duration: _duration }} onintroend={next}>
             <div
                 class="digit-card"
                 class:digit-top={flipDirection < 0}

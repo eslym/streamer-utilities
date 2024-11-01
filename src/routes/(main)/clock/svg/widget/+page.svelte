@@ -5,9 +5,11 @@
     } from '$lib/components/svg-clock/SVGClock.svelte';
     import { page } from '$app/stores';
 
-    let clockSettings = defaultSettings;
+    let clockSettings = $state(defaultSettings);
 
-    $: if (!import.meta.env.SSR) clockSettings = decodeSettings($page.url.searchParams);
+    $effect.pre(() => {
+        if (!import.meta.env.SSR) clockSettings = decodeSettings($page.url.searchParams);
+    });
 </script>
 
 <svelte:head>

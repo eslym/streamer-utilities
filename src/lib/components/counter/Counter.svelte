@@ -3,20 +3,15 @@
     import CounterNumber from './CounterNumber.svelte';
     import type { ComponentProps } from 'svelte';
 
-    type $$Props = Omit<ComponentProps<CounterNumber>, 'chars' | 'char'> & {
+    type $$Props = Omit<ComponentProps<typeof CounterNumber>, 'chars' | 'char'> & {
         data: [string, string[]][][];
-
-        '--counter-group-gap'?: string;
-        '--counter-digit-gap'?: string;
-        '--counter-padding'?: string;
-        '--counter-radius'?: string;
-        '--counter-bg'?: string;
+        easing?: any;
+        animationDuration?: number;
+    } & {
+        [K in `--counter-${string}`]?: string;
     };
 
-    export let data: [string, string[]][][];
-
-    export let easing = quadIn;
-    export let animationDuration = 150;
+    let { data, easing = quadIn, animationDuration = 150 }: $$Props = $props();
 </script>
 
 <div class="counter-group">

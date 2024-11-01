@@ -1,4 +1,4 @@
-<script lang="ts" context="module">
+<script lang="ts" module>
     export type ClockSettings = {
         _v: number;
         font: string;
@@ -15,23 +15,16 @@
         paddingY: number;
     };
 
+    export type ClockLayoutProps = {
+        settings: ClockSettings;
+    } & Record<
+        'h' | 'm' | 's' | 'a' | 'c' | 'd',
+        Snippet<[sx: number | undefined, sy: number | undefined] | []>
+    >;
+
     export type ClockLayout = {
         name: string;
-        default: ComponentType<
-            SvelteComponent<
-                {
-                    settings: ClockSettings;
-                },
-                {},
-                Record<
-                    'h' | 'm' | 's' | 'a' | 'c' | 'd',
-                    {
-                        scaleX?: number;
-                        scaleY?: number;
-                    }
-                >
-            >
-        >;
+        default: Component<ClockLayoutProps>;
     };
 
     export const defaultSettings: ClockSettings = {
@@ -122,25 +115,21 @@
     import { clock } from '$lib/clock';
     import { fonts } from '$lib/svg-numbers';
     import { onresize } from '$lib/actions';
-    import { tick, type ComponentType, SvelteComponent } from 'svelte';
-    import { hcf, parseBoolean, positiveString } from '$lib/utils';
+    import { tick, type Component, type Snippet } from 'svelte';
+    import { hcf, parseBoolean } from '$lib/utils';
     import { browser } from '$app/environment';
 
-    export let settings: ClockSettings;
+    interface Props {
+        settings: ClockSettings;
+        ratio?: [number, number];
+    }
 
-    export let ratio: [number, number] = [NaN, NaN];
+    let { settings, ratio = $bindable([NaN, NaN]) }: Props = $props();
 
-    let scale = 1;
+    let scale = $state(1);
 
-    let wrapperEl: HTMLDivElement;
-    let clockEl: HTMLDivElement;
-
-    $: layout = clockLayouts[settings.layout] ?? clockLayouts[defaultSettings.layout];
-
-    $: fontData = fonts[settings.font] ?? fonts[defaultSettings.font];
-    $: hour = $clock[settings.twelveHour ? 'h12' : 'h24'];
-
-    $: browser && calculateSize(settings.paddingX, settings.paddingY);
+    let wrapperEl: HTMLDivElement = $state(undefined as any);
+    let clockEl: HTMLDivElement = $state(undefined as any);
 
     async function calculateSize(..._: any[]) {
         scale = 1;
@@ -163,6 +152,14 @@
 
         scale = Math.min(scaleX, scaleY);
     }
+
+    let layout = $derived(clockLayouts[settings.layout] ?? clockLayouts[defaultSettings.layout]);
+    let fontData = $derived(fonts[settings.font] ?? fonts[defaultSettings.font]);
+    let hour = $derived($clock[settings.twelveHour ? 'h12' : 'h24']);
+
+    $effect.pre(() => {
+        browser && calculateSize(settings.paddingX, settings.paddingY);
+    });
 </script>
 
 <div
@@ -171,40 +168,10 @@
     bind:this={wrapperEl}
 >
     <div style="transform: scale({scale});" use:onresize={calculateSize} bind:this={clockEl}>
-        <svelte:component this={layout.default} {settings}>
-            <div class="flex flex-row" slot="h" let:scaleX let:scaleY>
-                {#each hour as char}
-                    <C
-                        {char}
-                        font={fontData}
-                        primaryColor={settings.color}
-                        secondaryColor={settings.secondaryColor}
-                        {scaleX}
-                        {scaleY}
-                    />
-                {/each}
-            </div>
-            <div class="flex flex-row" slot="m" let:scaleX let:scaleY>
-                {#each $clock.min as char}
-                    <C
-                        {char}
-                        font={fontData}
-                        primaryColor={settings.color}
-                        secondaryColor={settings.secondaryColor}
-                        {scaleX}
-                        {scaleY}
-                    />
-                {/each}
-            </div>
-            <div
-                class="flex flex-row"
-                class:hidden={!settings.showSeconds}
-                slot="s"
-                let:scaleX
-                let:scaleY
-            >
-                {#if settings.showSeconds}
-                    {#each $clock.sec as char}
+        <layout.default {settings}>
+            {#snippet h(scaleX = 1, scaleY = 1)}
+                <div class="flex flex-row">
+                    {#each hour as char}
                         <C
                             {char}
                             font={fontData}
@@ -214,77 +181,102 @@
                             {scaleY}
                         />
                     {/each}
-                {/if}
-            </div>
-            <div
-                class="flex flex-row"
-                class:hidden={!settings.showNight}
-                slot="a"
-                let:scaleX
-                let:scaleY
-            >
-                {#if settings.showNight}
-                    <C
-                        char={$clock.pm ? 'P' : 'A'}
-                        font={fontData}
-                        primaryColor={settings.color}
-                        secondaryColor={settings.secondaryColor}
-                        {scaleX}
-                        {scaleY}
-                    />
-                    <C
-                        char="M"
-                        font={fontData}
-                        primaryColor={settings.color}
-                        secondaryColor={settings.secondaryColor}
-                        {scaleX}
-                        {scaleY}
-                    />
-                {/if}
-            </div>
-            <div class:hidden={settings.beforeMinutes === 'none'} slot="c" let:scaleX let:scaleY>
-                {#if settings.beforeMinutes !== 'none'}
-                    {@const visible =
-                        settings.beforeMinutes !== 'space' &&
-                        (!settings.blinkColon || $clock.blink)}
-                    <C
-                        char=":"
-                        font={fontData}
-                        primaryColor={visible ? settings.color : 'transparent'}
-                        secondaryColor={settings.beforeMinutes === 'space'
-                            ? 'transparent'
-                            : settings.secondaryColor}
-                        {scaleX}
-                        {scaleY}
-                    />
-                {/if}
-            </div>
-            <div
-                class:hidden={settings.beforeSeconds === 'none' || !settings.showSeconds}
-                slot="d"
-                let:scaleX
-                let:scaleY
-            >
-                {#if settings.beforeSeconds !== 'none'}
-                    {@const invisible = settings.beforeSeconds === 'space'}
-                    {@const blink = !settings.blinkColon || $clock.blink}
-                    {@const isColon = settings.beforeSeconds === 'colon'}
-                    <C
-                        char={isColon ? ':' : '.'}
-                        font={fontData}
-                        primaryColor={invisible
-                            ? 'transparent'
-                            : !isColon
-                              ? settings.color
-                              : blink
-                                ? settings.color
-                                : 'transparent'}
-                        secondaryColor={invisible ? 'transparent' : settings.secondaryColor}
-                        {scaleX}
-                        {scaleY}
-                    />
-                {/if}
-            </div>
-        </svelte:component>
+                </div>
+            {/snippet}
+            {#snippet m(scaleX = 1, scaleY = 1)}
+                <div class="flex flex-row">
+                    {#each $clock.min as char}
+                        <C
+                            {char}
+                            font={fontData}
+                            primaryColor={settings.color}
+                            secondaryColor={settings.secondaryColor}
+                            {scaleX}
+                            {scaleY}
+                        />
+                    {/each}
+                </div>
+            {/snippet}
+            {#snippet s(scaleX = 1, scaleY = 1)}
+                <div class="flex flex-row" class:hidden={!settings.showSeconds}>
+                    {#if settings.showSeconds}
+                        {#each $clock.sec as char}
+                            <C
+                                {char}
+                                font={fontData}
+                                primaryColor={settings.color}
+                                secondaryColor={settings.secondaryColor}
+                                {scaleX}
+                                {scaleY}
+                            />
+                        {/each}
+                    {/if}
+                </div>
+            {/snippet}
+            {#snippet a(scaleX = 1, scaleY = 1)}
+                <div class="flex flex-row" class:hidden={!settings.showNight}>
+                    {#if settings.showNight}
+                        <C
+                            char={$clock.pm ? 'P' : 'A'}
+                            font={fontData}
+                            primaryColor={settings.color}
+                            secondaryColor={settings.secondaryColor}
+                            {scaleX}
+                            {scaleY}
+                        />
+                        <C
+                            char="M"
+                            font={fontData}
+                            primaryColor={settings.color}
+                            secondaryColor={settings.secondaryColor}
+                            {scaleX}
+                            {scaleY}
+                        />
+                    {/if}
+                </div>
+            {/snippet}
+            {#snippet c(scaleX = 1, scaleY = 1)}
+                <div class:hidden={settings.beforeMinutes === 'none'}>
+                    {#if settings.beforeMinutes !== 'none'}
+                        {@const visible =
+                            settings.beforeMinutes !== 'space' &&
+                            (!settings.blinkColon || $clock.blink)}
+                        <C
+                            char=":"
+                            font={fontData}
+                            primaryColor={visible ? settings.color : 'transparent'}
+                            secondaryColor={settings.beforeMinutes === 'space'
+                                ? 'transparent'
+                                : settings.secondaryColor}
+                            {scaleX}
+                            {scaleY}
+                        />
+                    {/if}
+                </div>
+            {/snippet}
+            {#snippet d(scaleX = 1, scaleY = 1)}
+                <div class:hidden={settings.beforeSeconds === 'none' || !settings.showSeconds}>
+                    {#if settings.beforeSeconds !== 'none'}
+                        {@const invisible = settings.beforeSeconds === 'space'}
+                        {@const blink = !settings.blinkColon || $clock.blink}
+                        {@const isColon = settings.beforeSeconds === 'colon'}
+                        <C
+                            char={isColon ? ':' : '.'}
+                            font={fontData}
+                            primaryColor={invisible
+                                ? 'transparent'
+                                : !isColon
+                                  ? settings.color
+                                  : blink
+                                    ? settings.color
+                                    : 'transparent'}
+                            secondaryColor={invisible ? 'transparent' : settings.secondaryColor}
+                            {scaleX}
+                            {scaleY}
+                        />
+                    {/if}
+                </div>
+            {/snippet}
+        </layout.default>
     </div>
 </div>

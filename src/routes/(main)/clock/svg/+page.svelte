@@ -5,7 +5,7 @@
         encodeSettings
     } from '$lib/components/svg-clock/SVGClock.svelte';
     import { json, local } from '$lib/stores';
-    import { Hugeicon, Sun03Icon, Moon02Icon, ComputerIcon } from 'hugeicons-svelte';
+    import { Sun03Icon, Moon02Icon, ComputerIcon } from 'hugeicons-svelte';
     import { page } from '$app/stores';
     import ColorPicker from 'svelte-awesome-color-picker';
     import { fonts } from '$lib/svg-numbers';
@@ -16,11 +16,15 @@
     const store = local('clock/svg');
     const clockSettings = json(store, () => ({ ...defaultSettings }));
 
-    $: if ($clockSettings._v !== defaultSettings._v) $store = null;
+    $effect.pre(() => {
+        if ($clockSettings._v !== defaultSettings._v) $store = null;
+    });
 
-    $: if (!$clockSettings.showSeconds) $clockSettings.beforeSeconds = 'dot';
+    $effect.pre(() => {
+        if (!$clockSettings.showSeconds) $clockSettings.beforeSeconds = 'dot';
+    });
 
-    let ratio: [number, number] = [0, 0];
+    let ratio: [number, number] = $state([0, 0]);
 
     function buildSearch(params: URLSearchParams, width: number, height: number) {
         const r = Math.floor(Math.min(1920 / width, 1080 / height));
@@ -30,7 +34,14 @@
         return params;
     }
 
-    $: widgetParams = buildSearch(encodeSettings($clockSettings), ratio[0], ratio[1]);
+    let widgetParams = $derived(buildSearch(encodeSettings($clockSettings), ratio[0], ratio[1]));
+
+    let ThemeIcon = $derived(
+        {
+            light: Sun03Icon,
+            dark: Moon02Icon
+        }[$placeholderTheme ?? ''] ?? ComputerIcon
+    );
 </script>
 
 <svelte:head>
@@ -55,16 +66,11 @@
         >
             <button
                 class="btn-circle btn btn-solid-secondary"
-                on:click={() =>
+                onclick={() =>
                     ($placeholderTheme =
                         themes[(themes.indexOf($placeholderTheme) + 1) % themes.length])}
             >
-                <Hugeicon
-                    icon={{
-                        light: Sun03Icon,
-                        dark: Moon02Icon
-                    }[$placeholderTheme ?? ''] ?? ComputerIcon}
-                />
+                <ThemeIcon />
             </button>
         </span>
     </div>
@@ -77,7 +83,7 @@
         <a
             href="/clock/svg/widget?{widgetParams}"
             class="btn btn-solid-primary h-14 py-2 flex flex-col items-center justify-center"
-            on:click={(ev) => {
+            onclick={(ev) => {
                 if (ev.ctrlKey || ev.altKey || ev.shiftKey) return;
                 ev.preventDefault();
                 navigator.clipboard.writeText($page.url.to(`/clock/svg/widget?${widgetParams}`));
@@ -253,7 +259,7 @@
                 />
             </div>
         </div>
-        <button type="button" class="btn my-8" on:click={() => ($store = null)}>
+        <button type="button" class="btn my-8" onclick={() => ($store = null)}>
             Reset to Default
         </button>
     </div>

@@ -1,12 +1,18 @@
-<script lang="ts" context="module">
+<script lang="ts" module>
     export const name = 'Simple';
 </script>
 
+<script lang="ts">
+    import type { ClockLayoutProps } from '../SVGClock.svelte';
+
+    let { h, c, m, d, s, a }: ClockLayoutProps = $props();
+</script>
+
 <div class="flex flex-row">
-    <slot name="h" />
-    <slot name="c" />
-    <slot name="m" />
-    <slot name="d" />
-    <slot name="s" />
-    <slot name="a" />
+    {@render h?.()}
+    {@render c?.()}
+    {@render m?.()}
+    {@render d?.()}
+    {@render s?.()}
+    {@render a?.()}
 </div>

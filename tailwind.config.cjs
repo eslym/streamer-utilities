@@ -9,7 +9,8 @@ const config = {
     plugins: [
         require('rippleui'),
         require('@tailwindcss/typography'),
-        require('@tailwindcss/container-queries')
+        require('@tailwindcss/container-queries'),
+        require('tailwind-scrollbar')
     ]
 };
 
