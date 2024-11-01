@@ -19,13 +19,13 @@ const ASSETS = [
     ...files, // everything in `static`
     ...prerendered,
     FALLBACK // the fallback page
-].filter((p) => !/(^|\/)\.[^\/]/.test(p));
+];
 
 self.addEventListener('install', ((event: ExtendableEvent) => {
     // Create a new cache and add all files to it
     async function addFilesToCache() {
         const cache = await caches.open(CACHE);
-        await cache.addAll(ASSETS);
+        await cache.addAll(ASSETS.map((u) => new Request(u, { cache: 'reload' })));
     }
 
     event.waitUntil(addFilesToCache());
