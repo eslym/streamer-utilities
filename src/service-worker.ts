@@ -47,8 +47,6 @@ self.addEventListener('fetch', ((event: FetchEvent) => {
     if (event.request.method !== 'GET') return;
     const url = new URL(event.request.url);
 
-    console.log(url);
-
     if (url.origin !== location.origin) {
         if (GOOGLE_FONTS_ORIGINS.has(url.origin)) {
             event.respondWith(gfontsCache(event.request));
