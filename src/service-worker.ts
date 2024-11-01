@@ -2,7 +2,7 @@
 /// <reference no-default-lib="true"/>
 /// <reference lib="esnext" />
 /// <reference lib="webworker" />
-import { build, files, version } from '$service-worker';
+import { build, files, prerendered, version } from '$service-worker';
 
 const FALLBACK = '/404.html';
 
@@ -15,7 +15,8 @@ const CACHE = `cache-${version}`;
 const ASSETS = [
     ...build, // the app itself
     ...files, // everything in `static`
-    '/' // the root index.html
+    ...prerendered,
+    FALLBACK // the fallback page
 ].filter((p) => !/(^|\/)\.[^\/]/.test(p));
 
 self.addEventListener('install', ((event: ExtendableEvent) => {
