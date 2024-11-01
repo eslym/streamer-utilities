@@ -13,7 +13,7 @@
     import ColorPicker from 'svelte-awesome-color-picker';
     import GoogleFontLoader from '$lib/components/GoogleFontLoader.svelte';
     import SidesConfig from '$lib/components/SidesConfig.svelte';
-    import { onMount, tick } from 'svelte';
+    import { onMount } from 'svelte';
     import { onresize } from '$lib/actions';
 
     const placeholderTheme = local('transparent-placeholder');
@@ -73,8 +73,8 @@
 </script>
 
 <svelte:head>
-    <title>Counter Style Clock - Streamer Utitilies</title>
-    <meta name="description" content="A clock that uses a counter style to display the time." />
+    <title>Flip Clock - Streamer Utitilies</title>
+    <meta name="description" content="A flip style clock." />
 </svelte:head>
 
 <GoogleFontLoader families={googleFonts} />
