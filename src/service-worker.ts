@@ -6,9 +6,9 @@ import { build, files, prerendered, version } from '$service-worker';
 
 const FALLBACK = '/404.html';
 
-const CACHEABLE_DESTINATIONS = new Set(['image', 'font']);
-
 const UNCACHEABLE = new Set(['/_app/version.json', '/_app/env.js']);
+
+const GOOGLE_FONTS_ORIGINS = new Set(['https://fonts.gstatic.com', 'https://fonts.googleapis.com']);
 
 // Create a unique cache name for this deployment
 const CACHE = `cache-${version}`;
@@ -46,7 +46,7 @@ self.addEventListener('fetch', ((event: FetchEvent) => {
     const url = new URL(event.request.url);
 
     if (url.origin !== location.origin) {
-        if (CACHEABLE_DESTINATIONS.has(url.pathname.split('/')[1])) {
+        if (GOOGLE_FONTS_ORIGINS.has(url.origin)) {
             event.respondWith(tryCacheRespond(event.request));
         }
         return;
