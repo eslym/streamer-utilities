@@ -14,7 +14,9 @@
 
     let index = $derived(chars.indexOf(char));
 
+    // svelte-ignore state_referenced_locally
     let _current = $state(index);
+    // svelte-ignore state_referenced_locally
     let _next = $state(index);
 
     let flipDirection = $state(1);

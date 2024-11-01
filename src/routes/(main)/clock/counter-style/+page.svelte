@@ -13,7 +13,7 @@
     import ColorPicker from 'svelte-awesome-color-picker';
     import GoogleFontLoader from '$lib/components/GoogleFontLoader.svelte';
     import SidesConfig from '$lib/components/SidesConfig.svelte';
-    import { onMount } from 'svelte';
+    import { onMount, tick } from 'svelte';
     import { onresize } from '$lib/actions';
 
     const placeholderTheme = local('transparent-placeholder');
@@ -26,23 +26,10 @@
 
     let googleFonts: string[] = $state($settings.googleFont ? [$settings.digitFont] : []);
 
-    let timeout: any = undefined;
-
     let clockEl: HTMLDivElement = $state(undefined as any);
 
     let clockWidth = $state(0);
     let clockHeight = $state(0);
-
-    function updateGoogleFont(..._: any[]) {
-        clearTimeout(timeout);
-        if (!$settings.googleFont) {
-            googleFonts = [];
-            return;
-        }
-        timeout = setTimeout(() => {
-            googleFonts = $settings.googleFont ? [$settings.digitFont] : [];
-        }, 500);
-    }
 
     function updateSize() {
         if (!import.meta.env.SSR) {
@@ -60,16 +47,21 @@
 
     onMount(() => {
         updateSize();
+    });
+
+    let calculated = $derived(toProps($settings));
+
+    $effect.pre(() => {
+        if (!$settings.googleFont) {
+            googleFonts = [];
+            return;
+        }
+        let timeout = setTimeout(() => {
+            googleFonts = $settings.googleFont ? [$settings.digitFont] : [];
+        }, 500);
         return () => clearTimeout(timeout);
     });
-    let calculated = $derived(toProps($settings));
-    $effect.pre(() => {
-        if (
-            $settings.digitFont !== googleFonts[0] ||
-            Number($settings.googleFont) !== googleFonts.length
-        )
-            updateGoogleFont();
-    });
+
     let widgetParams = $derived(buildSearch(encodeSettings($settings), clockWidth, clockHeight));
 
     let ThemeIcon = $derived(

@@ -10,7 +10,9 @@
         defaultSides: Sides;
     }
 
-    let { sides = $bindable(), defaultSides }: Props = $props();
+    let { sides: outSides = $bindable(), defaultSides }: Props = $props();
+
+    let _sides = $state(outSides);
 
     const id = globalId++;
 
@@ -30,37 +32,39 @@
     };
 
     export function syncSides(..._: any[]) {
-        if (sides.mode === sides.sides.length) return;
-        if (sides.sides.length > sides.mode)
-            sides = { mode: sides.mode, sides: sides.sides.slice(0, sides.mode) };
+        if (_sides.mode === _sides.sides.length) return;
+        if (_sides.sides.length > _sides.mode)
+            _sides = { mode: _sides.mode, sides: _sides.sides.slice(0, _sides.mode) };
         const expand =
             defaultSides.mode === 1
                 ? new Array(4).fill(defaultSides.sides[0])
                 : defaultSides.mode === 2
                   ? [0, 1, 0, 1].map((i) => defaultSides.sides[i])
                   : defaultSides.sides;
-        sides = {
-            mode: sides.mode,
-            sides: sides.sides.concat(expand.slice(sides.sides.length, sides.mode))
+        _sides = {
+            mode: _sides.mode,
+            sides: _sides.sides.concat(expand.slice(_sides.sides.length, _sides.mode))
         };
     }
+
     $effect.pre(() => {
-        syncSides(sides, defaultSides);
+        syncSides(_sides, defaultSides);
+        outSides = _sides;
     });
 </script>
 
 <div class="form-field">
     <span class="form-label">Mode</span>
     <div class="pagination pagination-compact max-w-full w-full flex flex-row">
-        <input id="sides-{id}-mode-1" type="radio" value={1} bind:group={sides.mode} />
+        <input id="sides-{id}-mode-1" type="radio" value={1} bind:group={_sides.mode} />
         <label for="sides-{id}-mode-1" class="btn flex-grow">
             {modeMap[1].name}
         </label>
-        <input id="sides-{id}-mode-2" type="radio" value={2} bind:group={sides.mode} />
+        <input id="sides-{id}-mode-2" type="radio" value={2} bind:group={_sides.mode} />
         <label for="sides-{id}-mode-2" class="btn flex-grow">
             {modeMap[2].name}
         </label>
-        <input id="sides-{id}-mode-4" type="radio" value={4} bind:group={sides.mode} />
+        <input id="sides-{id}-mode-4" type="radio" value={4} bind:group={_sides.mode} />
         <label for="sides-{id}-mode-4" class="btn flex-grow">
             {modeMap[4].name}
         </label>
@@ -68,19 +72,19 @@
 </div>
 <div
     class="grid gap-x-2 gap-y-3"
-    class:grid-cols-1={sides.mode === 1}
-    class:grid-cols-2={sides.mode > 1}
+    class:grid-cols-1={_sides.mode === 1}
+    class:grid-cols-2={_sides.mode > 1}
 >
-    {#each sides.sides as side, i}
+    {#each _sides.sides as side, i}
         <div class="form-field">
             <label class="form-label" for="sides-{id}-side-{i}">
-                {modeMap[sides.mode].sides[i]}
+                {modeMap[_sides.mode].sides[i]}
             </label>
             <input
                 id="sides-{id}-side-{i}"
                 type="number"
                 class="input input-solid max-w-full"
-                bind:value={sides.sides[i]}
+                bind:value={_sides.sides[i]}
             />
         </div>
     {/each}
